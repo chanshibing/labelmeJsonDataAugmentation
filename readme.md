@@ -6,30 +6,8 @@ Accompanying code for the [Paperspace tutorial series on adapting data augmentat
 1. OpenCV 3.x
 2. Numpy
 3. Matplotlib
-
-We support a variety of data augmentations, like.
-
-### Horizontal Flipping
-![Horizontal Flip](Images/hflip.png)
-
-### Scaling
-![Scaling](Images/scale_aug.png)
-
-### Translation
-![Translation](Images/transl_aug.png)
-
-### Rotation
-![Rotation](Images/rotate.png)
-
-### Shearing
-![Shearing](Images/shear_box.png)
-
-### Resizing
-![Resizing](Images/resize.png)
-
-
-## Quick Start
-A quick start tutorial can be found in the file `quick-start.ipynb` in this repo.
-
+## Modify from mine
+dataAugmentation.py is the start function of procedure;
+data_aug/json2numpy.py is the format json to numpy
 ## Documentation
 A list of all possible transforms and extensive documentation can be found in by opening `docs/build/html/index.html` in your browser or at this [link.](https://augmentationlib.paperspace.com/)
