@@ -50,14 +50,13 @@ class labelme2coco(object):
         self.save_json()
 
     def data_transfer(self):
-
         for num, json_file in enumerate(self.labelme_json):
             with open(json_file, 'r') as fp:
                 data = json.load(fp)  # 加载json文件
                 self.images.append(self.image(data, num))
                 for shapes in data['shapes']:
                     points = shapes['points']
-                    if points[0][0] != 0 and points[0][1] != 0 and points[1][0] != 0 and points[1][1] != 0:
+                    if points[0][0] != 0 or points[0][1] != 0 or points[1][0] != 0 or points[1][1] != 0:
                         label = shapes['label']
                         # if label not in self.label:
                         #     self.categories.append(self.categorie(label))
@@ -70,18 +69,18 @@ class labelme2coco(object):
 
     def image(self, data, num):
         image = {}
-        img = utils.img_b64_to_arr(data['imageData'])  # 解析原图片数据
+        #img = utils.img_b64_to_arr(data['imageData'])  # 解析原图片数据
         # img=io.imread(data['imagePath']) # 通过图片路径打开图片
         # img = cv2.imread(data['imagePath'], 0)
-        height, width = img.shape[:2]
-        img = None
-        image['height'] = height
-        image['width'] = width
+        #height, width = img.shape[:2]
+        #img = None
+        image['height'] = data['imageHeight']
+        image['width'] = data['imageWidth']
         image['id'] = num + 1
         image['file_name'] = data['imagePath'].split('/')[-1]
 
-        self.height = height
-        self.width = width
+        self.height = data['imageHeight']
+        self.width = data['imageWidth']
 
         return image
 
@@ -166,7 +165,7 @@ class labelme2coco(object):
         json.dump(self.data_coco, open(self.save_json_path, 'w'), indent=4, cls=MyEncoder)  # indent=4 更加美观显示
 
 
-labelme_json = glob.glob('H:/yjs614/data/2/dataAug/*.json')
+labelme_json = glob.glob('H:/yjs614/data/train_data4/dataAug/*.json')
 # labelme_json=['./1.json']
 
 labelme2coco(labelme_json, './out.json')

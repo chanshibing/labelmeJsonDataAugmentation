@@ -148,10 +148,11 @@ class RandomScale(object):
             scale_x = random.uniform(*self.scale)
             scale_y = scale_x
             
-    
-        
+
         resize_scale_x = 1 + scale_x
         resize_scale_y = 1 + scale_y
+        resize_scale_x = 0.5
+        resize_scale_y = 0.5
         
         img=  cv2.resize(img, None, fx = resize_scale_x, fy = resize_scale_y)
         
@@ -202,7 +203,7 @@ class Scale(object):
         
     """
 
-    def __init__(self, scale_x = 0.2, scale_y = 0.2):
+    def __init__(self, scale_x = -0.2, scale_y = -0.3):
         self.scale_x = scale_x
         self.scale_y = scale_y
         
@@ -236,8 +237,75 @@ class Scale(object):
         bboxes = clip_box(bboxes, [0,0,1 + img_shape[1], img_shape[0]], 0.25)
 
     
-        return img, bboxes  
-    
+        return img, bboxes
+
+
+class Clip(object):
+    """Scales the image
+
+    Bounding boxes which have an area of less than 25% in the remaining in the
+    transformed image is dropped. The resolution is maintained, and the remaining
+    area if any is filled by black color.
+
+
+    Parameters
+    ----------
+    scale_x: float
+        The factor by which the image is scaled horizontally
+
+    scale_y: float
+        The factor by which the image is scaled vertically
+
+    Returns
+    -------
+
+    numpy.ndaaray
+        Scaled image in the numpy format of shape `HxWxC`
+
+    numpy.ndarray
+        Tranformed bounding box co-ordinates of the format `n x 4` where n is
+        number of bounding boxes and 4 represents `x1,y1,x2,y2` of the box
+
+    """
+
+    def __init__(self, clip_x=0, clip_y=0, clip_w=1024, clip_h=1024):
+        self.clip_x = clip_x
+        self.clip_y = clip_y
+        self.clip_w = clip_w
+        self.clip_h = clip_h
+
+    def __call__(self, img, bboxes):
+        # Chose a random digit to scale by
+
+        img_shape = img.shape
+
+        resize_clip_x = self.clip_x
+        resize_clip_y = self.clip_y
+        resize_clip_w = self.clip_w
+        resize_clip_h = self.clip_h
+
+        bboxes[:, :4] -= [resize_clip_x, resize_clip_y, resize_clip_x, resize_clip_y]
+        canvas = np.zeros((resize_clip_w, resize_clip_h, 3), dtype=np.uint8)
+
+        y_lim = int(resize_clip_y + resize_clip_h)
+        x_lim = int(resize_clip_x + resize_clip_w)
+
+        canvas[0:resize_clip_h, 0:resize_clip_w, :] = img[resize_clip_y:y_lim, resize_clip_x:x_lim, :]
+
+        img = canvas
+
+        i = 0
+        for box in bboxes:
+            if box[0] < 0 or box[1] < 0 or box[2] > resize_clip_w or box[3] > resize_clip_h or box[2] < 0 or box[3] < 0 or box[0] > resize_clip_w or box[1] > resize_clip_h:
+                bboxes[i][0] = 0
+                bboxes[i][1] = 0
+                bboxes[i][2] = 0
+                bboxes[i][3] = 0
+            i += 1
+
+        return img, bboxes
+
+
 
 class RandomTranslate(object):
     """Randomly Translates the image    

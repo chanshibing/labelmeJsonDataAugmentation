@@ -8,8 +8,8 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 
-labelme_json = glob.glob('H:/yjs614/data/2/*.json')
-outSubName = "FlipAndRandomScaleAndRandomHSV."
+labelme_json = glob.glob('H:/yjs614/data/3/1/*.json')
+outSubName = "Scale05." #原图片名称append
 
 for jsonName in labelme_json :
     imgName = jsonName.split('.')[0] + ".jpg"
@@ -20,8 +20,8 @@ for jsonName in labelme_json :
     # img = cv2.imread("messi.jpg")[:,:,::-1] #OpenCV uses BGR channels
     # bboxes = pkl.load(open("messi_ann.pkl", "rb"))
 
-    # [RandomHorizontalFlip(1),RandomHSV(1,2,3),Resize(500),RandomShear(), RandomScale(0.2, diff = True), RandomRotate(10)]
-    transforms = Sequence([RandomHorizontalFlip(1),RandomScale(0.4, diff = True),RandomHSV(5,1,50)])
+    # [RandomHorizontalFlip(1),RandomHSV(30,80,80),Resize(500),RandomShear(0.2), RandomScale(0.2, diff = True), RandomRotate(10)]
+    transforms = RandomScale()
     rBoxes = bboxes
     img, bboxes = transforms(img, bboxes)
 
@@ -33,7 +33,7 @@ for jsonName in labelme_json :
     for ss in imgName.split('/')[:-1]:
         outName += ss + '/'
     filePath = outName + imgName.split('/')[-1].split('\\')[0] + '/'
-    outName = filePath  + 'dataAug/' + imgName.split('/')[-1].split('\\')[-1].split('.')[0] + outSubName + imgName.split('/')[-1].split('.')[1]
+    outName = filePath  + '1/' + imgName.split('/')[-1].split('\\')[-1].split('.')[0] + outSubName + imgName.split('/')[-1].split('.')[1]
     plt.imsave(outName, img)
     save2json(filePath, imgName.split('/')[-1].split('\\')[-1].split('.')[0], outSubName, bboxes, rBoxes)
     a = 0

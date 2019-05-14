@@ -35,11 +35,13 @@ class json2Numpy(object):
             num2 = 0
             a = []
             fileName = outData['imagePath'].split('\\')
+            outData['imageHeight'] = 1024
+            outData['imageWidth'] = 1024
             outData['imagePath'] = fileName[-1].split('.')[0] + self.fileS + fileName[-1].split('.')[1]
             boxes2Length = len(self.boxes1)
             for shapes in outData['shapes']:
                 points = shapes['points']
-                if self.boxes2[num2][0] < 2048 and self.boxes2[num2][1] < 2048 and self.boxes2[num2][2] < 2048 and self.boxes2[num2][3] < 2048:
+                if self.boxes2[num2][0] < 1024 and self.boxes2[num2][1] < 1024 and self.boxes2[num2][2] < 1024 and self.boxes2[num2][3] < 1024 and self.boxes2[num2][0] > 0 and self.boxes2[num2][1] > 0 and self.boxes2[num2][2] > 0 and self.boxes2[num2][3] > 0 :
                     points[0][0] = self.boxes1[num1][0]
                     points[0][1] = self.boxes1[num1][1]
                     points[1][0] = self.boxes1[num1][2]
@@ -53,10 +55,10 @@ class json2Numpy(object):
                     points[1][1] = 0
                     num2 += 1
                     if num1 < boxes2Length:
-                        if self.boxes1[num1][0] >= 2048 or self.boxes1[num1][1] >= 2048 or self.boxes1[num1][2] >= 2048 or self.boxes1[num1][3] >= 2048:
+                        if self.boxes1[num1][0] >= 1024 or self.boxes1[num1][1] >= 1024 or self.boxes1[num1][2] >= 1024 or self.boxes1[num1][3] >= 1024 or self.boxes1[num1][0] <= 0 or self.boxes1[num1][1] <= 0 or self.boxes1[num1][2] <= 0 or self.boxes1[num1][3] <= 0 :
                             num1 += 1
         fp.close()
-        outS = self.labelmeJson + "dataAug/" + self.imgRName + self.fileS + "json"
+        outS = self.labelmeJson + "1/" + self.imgRName + self.fileS + "json"
         with open(outS, 'w') as out:
             json.dump(outData, out)
         out.close()
